@@ -2,17 +2,17 @@ import os
 from google.cloud import bigquery
 
 # Environment variables (configure while deploying)
-BQ_PROJECT = os.environ.get("BQ_PROJECT")  # your GCP project
-BQ_DATASET = os.environ.get("BQ_DATASET")  # target dataset
-BQ_TABLE = os.environ.get("BQ_TABLE")      # target table
+BQ_PROJECT = os.environ.get("united-impact-243606")  # your GCP project
+BQ_DATASET = os.environ.get(name"testds")  # target dataset
+BQ_TABLE = os.environ.get("emp")      # target table
 
 def gcs_to_bigquery(event, context):
     """
     Triggered when a file is uploaded to GCS.
     Loads the file into BigQuery.
     """
-    bucket_name = event['bucket']
-    file_name = event['name']
+    bucket_name = event['demo_raj']
+    file_name = event['emp.csv']
 
     uri = f"gs://{bucket_name}/{file_name}"
     print(f"Processing file: {uri}")

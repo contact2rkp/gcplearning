@@ -9,7 +9,7 @@ BQ_TABLE = os.environ.get("emp")      # target table
 def gcs_to_bigquery(event, context):
     """
     Triggered when a file is uploaded to GCS.
-    Loads the file into BigQuery.
+    Loads the file into BigQuery
     """
     bucket_name = event['demo_raj']
     file_name = event['emp.csv']

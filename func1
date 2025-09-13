@@ -1,0 +1,38 @@
+import os
+from google.cloud import bigquery
+
+# Environment variables (configure while deploying)
+BQ_PROJECT = os.environ.get("BQ_PROJECT")  # your GCP project
+BQ_DATASET = os.environ.get("BQ_DATASET")  # target dataset
+BQ_TABLE = os.environ.get("BQ_TABLE")      # target table
+
+def gcs_to_bigquery(event, context):
+    """
+    Triggered when a file is uploaded to GCS.
+    Loads the file into BigQuery.
+    """
+    bucket_name = event['bucket']
+    file_name = event['name']
+
+    uri = f"gs://{bucket_name}/{file_name}"
+    print(f"Processing file: {uri}")
+
+    client = bigquery.Client(project=BQ_PROJECT)
+    table_id = f"{BQ_PROJECT}.{BQ_DATASET}.{BQ_TABLE}"
+
+    job_config = bigquery.LoadJobConfig(
+        source_format=bigquery.SourceFormat.CSV,  # Change if JSON/Parquet/Avro
+        skip_leading_rows=1,  # Skip header row
+        autodetect=True,      # Auto schema detection
+        write_disposition="WRITE_APPEND",  # append data to table
+    )
+
+    load_job = client.load_table_from_uri(
+        uri, table_id, job_config=job_config
+    )
+    load_job.result()  # Wait for the job to complete
+
+    destination_table = client.get_table(table_id)
+    print(
+        f"Loaded {destination_table.num_rows} rows into {table_id}."
+    )
